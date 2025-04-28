@@ -10,13 +10,20 @@ services:
     networks:
       - webnet
     deploy:
-      replicas: 2
+      replicas: 3
       update_config:
         parallelism: 1
-        delay: 10s
+        delay: 5s
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.role == worker
 
 networks:
   webnet:
     driver: overlay
+
+volumes:
+  html:
+    driver: local
