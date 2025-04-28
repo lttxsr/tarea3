@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: lttxsr/nginx-swarm  # Cambia a tu usuario real
+  IMAGE_NAME: lttxsr/nginx-swarm 
 
 jobs:
   build-and-deploy:
@@ -24,17 +24,29 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile  # Especifica la ruta del Dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       
-      - name: SSH to Swarm Manager
+      - name: Verify Docker Image in Docker Hub
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Copy project files to Swarm Manager
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: 192.168.1.15 
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./docker-compose.yml"
+          target: "~/deployments/tarea3/"
+
+      - name: Deploy updated service on Manager
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: localhost
+          host: 192.168.1.15 
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            docker service update \
-              --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-              web
+            cd ~/deployments/tarea3
+            docker stack deploy -c docker-compose.yml miweb

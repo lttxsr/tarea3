@@ -1,15 +1,21 @@
-# Implementación de Docker Swarm
+# Implementación de Docker Swarm con CI/CD
 
-## Configuración del clúster
-- Nodo Manager: docker-desktop (127.0.0.1)
-- Servicios desplegados: web (nginx)
+## Configuración del Entorno
 
-## Estructura de archivos
-- `docker-compose.yml`: Configuración de servicios
-- `html/`: Contenido estático
-- `.github/workflows/deploy.yml`: Pipeline CI/CD
+### Requisitos
+- Docker Desktop (Windows/Mac) o Docker Engine (Linux)
+- Docker Compose
+- Cuenta en Docker Hub
+- Cuenta en GitHub
 
-## Comandos útiles
-- Ver servicios: `docker service ls`
-- Ver logs: `docker service logs web`
-- Actualizar: `docker service update --image nginx:latest web`
+### Estructura del Proyecto
+- `docker-compose.yml`: Define los servicios, redes y volúmenes
+- `Dockerfile`: Construcción de la imagen personalizada
+- `.github/workflows/deploy.yml`: Pipeline de CI/CD
+- `html/`: Contenido estático para el servidor web
+
+## Configuración de Docker Swarm
+
+1. Inicializar el swarm:
+```bash
+docker swarm init
